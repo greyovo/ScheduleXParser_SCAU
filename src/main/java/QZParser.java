@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 新强智教务解析
+ *
+ * @author GreyOVO
+ */
 public class QZParser {
 
     private Document document;
@@ -89,9 +94,9 @@ public class QZParser {
         Matcher matcher = pattern.matcher(str);
         if (matcher.find())
             str = matcher.group(0);
-        str = str.substring(1, str.length() - 2); //去除括号和“周”字
+        str = str.substring(1, str.length() - 2); //去除两端括号和“周”字
 
-        /*使用逗号作为分割多个区间*/
+        /*使用逗号 分割多个区间*/
         String[] rangeArr = str.split(",");
 
         ArrayList<Integer> weekList = new ArrayList<Integer>();
