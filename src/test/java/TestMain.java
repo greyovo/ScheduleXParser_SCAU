@@ -9,7 +9,7 @@ public class TestMain {
 
         /*读入HTML文件*/
         try {
-            BufferedReader br = new BufferedReader(new FileReader("src/main/resources/schedule_sample_scau.html"));
+            BufferedReader br = new BufferedReader(new FileReader("src/main/resources/sample2021-1.html"));
             String str;
             while ((str = br.readLine()) != null) {
                 html.append(str);
