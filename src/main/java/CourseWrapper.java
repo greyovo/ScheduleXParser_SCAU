@@ -26,14 +26,12 @@ public class CourseWrapper {
 
     @Override
     public String toString() {
-        return "CourseWrapper {" +
-                "name='" + name + '\'' +
-                ", position='" + position + '\'' +
-                ", teacher='" + teacher + '\'' +
-                ", day=" + day +
-                ", sectionStart=" + sectionStart +
-                ", sectionContinue=" + sectionContinue +
-                ", week=" + week.toString() +
-                '}';
+        return name + ":\n" + teacher +
+                " | " + position +
+                " | 星期" + day +
+                " | 起始节" + sectionStart +
+                " | 持续节" + sectionContinue +
+                " | 周次" + week.toString() +
+                "\n";
     }
 }

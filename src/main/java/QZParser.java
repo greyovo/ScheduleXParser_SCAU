@@ -47,6 +47,7 @@ public class QZParser {
                 CourseWrapper course;
                 for (int num = 0; num < courseNum; num++) {
                     course = getCourseByElement(content.get(num * offset), row, col);
+                    System.out.println(course.toString());
                     resultList.add(course);
                 }
             }
@@ -69,18 +70,10 @@ public class QZParser {
         String name = getClassName(info.get(4).text());
         String teacher = info.get(5).text();
         String position = info.get(8).text();
-        int sectionStart = getSectionStart(row);
-        int sectionContinue = getSectionContinue(info.get(7).text());
+        int sectionStart = getSectionStart(info.get(7).text(), row);
+        int sectionContinue = getSectionContinue(info.get(7).text(), row);
         List<Integer> week = getWeeksList(info.get(7).text());
 
-        System.out.println("name = " + name);
-        System.out.println("position = " + position);
-        System.out.println("teacher = " + teacher);
-        System.out.println("day = " + col);
-        System.out.println("sectionStart = " + sectionStart);
-        System.out.println("sectionContinue = " + sectionContinue);
-//        System.out.println("week = " + week);
-        System.out.println("==============");
         return new CourseWrapper(name, position, teacher, col, sectionStart, sectionContinue, week);
     }
 
@@ -88,6 +81,14 @@ public class QZParser {
      * 获取上课周次
      */
     private ArrayList<Integer> getWeeksList(String str) {
+        /*判断单双周*/
+        boolean odd = false;
+        boolean even = false;
+        if (str.contains("单周"))
+            odd = true;
+        else if (str.contains("双周"))
+            even = true;
+
         /*截取周次信息（因为该串可能包含节次信息）使用括号匹配*/
         String regex = "\\(.*?\\)";
         Pattern pattern = Pattern.compile(regex);
@@ -108,7 +109,14 @@ public class QZParser {
                 int start = Integer.parseInt(range[0].trim());
                 int end = Integer.parseInt(range[1].trim());
                 for (int i = start; i < end + 1; i++) {
-                    weekList.add(i);
+                    /*单双周、或无单双周*/
+                    if (even && i % 2 == 0) {
+                        weekList.add(i);
+                    } else if (odd && i % 2 != 0) {
+                        weekList.add(i);
+                    } else if (!even && !odd) {
+                        weekList.add(i);
+                    }
                 }
             }
         }
@@ -118,20 +126,60 @@ public class QZParser {
     /**
      * 获取课程起始节次
      *
-     * @param row 根据行数确定起始节次。
-     *            例 row = 0 -> 1-2节
+     * @param str 用于判断字符串中是否含有指定节次
+     * @param row 若无则根据行数，确定起始节次
      */
-    private int getSectionStart(int row) {
-        return row * 2 + 1;
+    private int getSectionStart(String str, int row) {
+        if (!str.contains("节")) {
+            switch (row) {
+                case 0:
+                    return 1;
+                case 1:
+                    return 3;
+                case 2:
+                    return 6;
+                case 3:
+                    return 8;
+                case 4:
+                    return 10;
+                default:
+                    return 13;
+            }
+        } else {
+            int index = str.indexOf("节");  //“节”字前的表示区间
+            str = str.substring(0, index);
+            String[] range = str.split("-");
+            return Integer.parseInt(range[0].trim());
+        }
     }
 
     /**
      * 获取课程持续节数
      */
-    private int getSectionContinue(String str) {
+    private int getSectionContinue(String str, int row) {
         if (!str.contains("节")) {
-            /*默认为两小节*/
-            return 2;
+            String newStr = "";
+            switch (row) {
+                case 0:
+                    newStr = "01-02节" + str;
+                    break;
+                case 1:
+                    newStr = "03-05节" + str;
+                    break;
+                case 2:
+                    newStr = "06-07节" + str;
+                    break;
+                case 3:
+                    newStr = "08-09节" + str;
+                    break;
+                case 4:
+                    newStr = "10-12节" + str;
+                    break;
+                default:
+                    newStr = "13-15节" + str;
+                    break;
+            }
+            return getSectionContinue(newStr, row);
         } else {
             int index = str.indexOf("节");  //“节”字前的表示区间
             str = str.substring(0, index);

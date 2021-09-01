@@ -9,7 +9,7 @@ public class TestMain {
 
         /*读入HTML文件*/
         try {
-            BufferedReader br = new BufferedReader(new FileReader("src/main/resources/sample2021-1.html"));
+            BufferedReader br = new BufferedReader(new FileReader("src/main/resources/sample2021-2.html"));
             String str;
             while ((str = br.readLine()) != null) {
                 html.append(str);
@@ -17,7 +17,6 @@ public class TestMain {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        System.out.println(html.toString());
         ArrayList<CourseWrapper> result = parser.parse(html.toString());
         System.out.println("result.size() = " + result.size());
     }
